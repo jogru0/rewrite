@@ -50,7 +50,7 @@ fn main() -> Result<(), Error> {
 
     let mut rebase = repo.rebase(None, Some(&parent), None, None)?;
 
-    let ticket = "COST-0000";
+    let ticket = "COST-50449";
 
     let change_type = "feat";
 
