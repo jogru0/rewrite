@@ -3,6 +3,28 @@ use std::env;
 use anyhow::Error;
 use git2::Repository;
 
+fn is_conform(message: &str) -> bool {
+    let mut iter = message.splitn(3, " | ");
+
+    let Some(_ticket) = iter.next() else {
+        return false;
+    };
+
+    let Some(_change_type) = iter.next() else {
+        return false;
+    };
+
+    let Some(_msg) = iter.next() else {
+        return false;
+    };
+
+    true
+}
+
+fn make_conform(ticket: &str, change_type: &str, message: &str) -> String {
+    format!("{ticket} | {change_type} | {message}")
+}
+
 fn main() -> Result<(), Error> {
     let args: Vec<String> = env::args().collect();
 
@@ -28,6 +50,10 @@ fn main() -> Result<(), Error> {
 
     let mut rebase = repo.rebase(None, Some(&parent), None, None)?;
 
+    let ticket = "COST-0000";
+
+    let change_type = "feat";
+
     while let Some(maybe_op) = rebase.next() {
         let op = maybe_op?;
         dbg!(op.kind().unwrap());
@@ -37,8 +63,13 @@ fn main() -> Result<(), Error> {
 
         let message = commit.message().unwrap();
 
-        let new_message = format!("COST | {message}");
+        let new_message = if is_conform(message) {
+            message.into()
+        } else {
+            make_conform(ticket, change_type, message)
+        };
 
+        assert!(is_conform(&new_message));
         rebase.commit(None, &repo.signature()?, Some(&new_message))?;
     }
 
