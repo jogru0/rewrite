@@ -21,8 +21,8 @@ fn is_conform(message: &str) -> bool {
     true
 }
 
-fn make_conform(ticket: &str, change_type: &str, message: &str) -> String {
-    format!("{ticket} | {change_type} | {message}")
+fn make_conform(ticket: &str, change_type: &str, non_conform_message: &str) -> String {
+    format!("{ticket} | {change_type} | {non_conform_message}")
 }
 
 fn main() -> Result<(), Error> {
@@ -50,7 +50,7 @@ fn main() -> Result<(), Error> {
 
     let mut rebase = repo.rebase(None, Some(&parent), None, None)?;
 
-    let ticket = "COST-50449";
+    let ticket = "COST-41146";
 
     let change_type = "feat";
 
